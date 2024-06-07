@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EML Analysis Result</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism-okaidia.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            overflow-wrap: break-word;
+        }
+        h1 {
+            color: #343a40;
+        }
+        h2 {
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #dee2e6;
+            position: relative;
+        }
+        ul li:last-child {
+            border-bottom: none;
+        }
+        ul li:hover .copy-btn {
+            display: inline-block;
+        }
+        strong {
+            color: #007bff;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            white-space: pre-wrap;
+        }
+        code {
+            white-space: pre-wrap;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+        }
+        th {
+            background-color: #f1f1f1;
+            text-align: left;
+        }
+        .copy-btn {
+            display: none;
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.2rem;
+            cursor: pointer;
+        }
+        .copy-status {
+            margin-left: 10px;
+            color: green;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            color: #868e96;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1>EML Analysis Result</h1>
+    <h2>Headers</h2>
+    <ul>
+        <li><strong>Message ID:</strong> {{ info.Message_ID }}</li>
+        <li><strong>Subject:</strong> {{ info.Subject }}</li>
+        <li><strong>Date (UTC):</strong> {{ info.Date_UTC }}</li>
+        <li><strong>From:</strong> {{ info.From }}</li>
+        <li><strong>To:</strong> {{ info.To }}</li>
+    </ul>
+
+    <h2>Hops</h2>
+    {% if info.Hops %}
+    <table>
+        <thead>
+            <tr>
+                <th>Hop</th>
+                <th>From</th>
+                <th>By</th>
+                <th>With</th>
+                <th>Date (UTC)</th>
+                <th>Delay</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for hop in info.Hops %}
+            <tr>
+                <td>{{ hop.Hop }}</td>
+                <td>{{ hop.From }}</td>
+                <td>{{ hop.By }}</td>
+                <td>{{ hop.With }}</td>
+                <td>{{ hop.Date_UTC }}</td>
+                <td>{{ hop.Delay }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No Hops Found</p>
+    {% endif %}
+
+    <h2>X Headers</h2>
+    {% if info.X_headers %}
+    <ul>
+        {% for key, value in info.X_headers.items %}
+            <li><strong>{{ key }}:</strong> {{ value }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No X Headers Found</p>
+    {% endif %}
+
+    <h2>Other Headers</h2>
+    {% if info.Other_headers %}
+    <ul>
+        {% for key, value in info.Other_headers.items %}
+            <li><strong>{{ key }}:</strong> {{ value }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No Other Headers Found</p>
+    {% endif %}
+
+    <h2>Bodies</h2>
+    {% for key, value in info.Bodies.items %}
+        {% if key == 'text/plain' %}
+        <div>
+            <h3>Text Plain</h3>
+            <pre>{{ value }}</pre>
+        </div>
+        {% elif key == 'text/html' %}
+        <div>
+            <h3>Text HTML</h3>
+            <pre><code class="language-html">{{ value|escape }}</code></pre>
+        </div>
+        {% endif %}
+    {% endfor %}
+
+    <h2>Extracted URLs</h2>
+    {% if info.Extracted_URLs %}
+    <ul>
+        {% for url in info.Extracted_URLs %}
+            <li>{{ url }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No URLs Found</p>
+    {% endif %}
+
+    <h2>Extracted Emails</h2>
+    {% if info.Extracted_emails %}
+    <ul>
+        {% for email in info.Extracted_emails %}
+            <li>{{ email }} <button class="copy-btn" onclick="copyToClipboard(this, '{{ email }}')">Copy</button><span class="copy-status"></span></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No Emails Found</p>
+    {% endif %}
+
+    <h2>Extracted Domains</h2>
+    {% if info.Extracted_domains %}
+    <ul>
+        {% for domain in info.Extracted_domains %}
+            <li>{{ domain }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No Domains Found</p>
+    {% endif %}
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
+<script>
+    function copyToClipboard(button, text) {
+        const tempInput = document.createElement('input');
+        tempInput.value = text;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        
+        const statusSpan = button.nextElementSibling;
+        statusSpan.textContent = 'Copied';
+        setTimeout(() => {
+            statusSpan.textContent = '';
+        }, 2000);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .container {
+            background-color: #1b1b1b;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            color: #00ffff;
+            text-shadow: 0 0 0.5rem #00ffff;
+        }
+        .form-control {
+            background-color: #2b2b2b;
+            border: none;
+            color: #ffffff;
+        }
+        .form-control:focus {
+            background-color: #2b2b2b;
+            color: #ffffff;
+            box-shadow: 0 0 0.5rem #00ffff;
+        }
+        .btn-primary {
+            background-color: #00ffff;
+            border: none;
+            color: #000000;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-primary:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 1.5rem #00ffff;
+        }
+        .alert-success {
+            background-color: #ff00ff;
+            border: none;
+            color: #000000;
+        }
+        .alert-success .alert-link {
+            color: #000000;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        .alert-danger {
+            background-color: #ff0000;
+            border: none;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="container d-flex justify-content-center mt-5">
+    <div class="col-md-8 mx-auto">
+        <h1 class="text-center display-4 fst-italic rounded">Sign Up</h1>
+        <div class="container">
+            <div class="col">
+                <hr>
+                <form method="POST">
+                    {% csrf_token %}
+                    {% if error %}
+                    <div class="alert alert-danger">
+                        {{error}}
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" value="{{ username }}" required>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                        <div class="col">
+                            <label for="repassword" class="form-label">Re-Password</label>
+                            <input type="password" class="form-control" name="repassword" required>
+                        </div>
+                    </div>
+                    <div class="mb-3 text-center">
+                        <input type="submit" value="Register" class="btn btn-lg btn-primary">
+                    </div>
+                    
+                    <div class="text-center mt-1">
+                        <div class="alert alert-success fs-3" role="alert">
+                            Have an account? <a href="{% url 'account:login' %}" class="alert-link">Login</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
