@@ -45,7 +45,7 @@ def register(request):
                               })
             
             else:
-                user = User.objects.create_user(username=username, email=email, first_name=firstname, password=password)
+                user = User.objects.create_user(username=username, password=password)
                 user.save()
                 login(request, user)
 
