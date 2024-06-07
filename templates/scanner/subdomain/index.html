@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subdomain Scanner</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0e0e0e;
+            color: #00ff00;
+            font-family: 'VT323', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            margin-bottom: 20px;
+            background-color: #1a1a1a;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #00ff00;
+            color: #0e0e0e;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #00cc00;
+        }
+
+        #subdomains {
+            list-style-type: none;
+            padding: 0;
+            width: 80%;
+            max-width: 600px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #00ff00;
+            margin-top: 20px;
+        }
+
+        #subdomains li {
+            background-color: #1a1a1a;
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #00ff00;
+        }
+
+        #loading {
+            display: none;
+            font-size: 18px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        #loading span {
+            margin-left: 10px;
+            border: 4px solid #00ff00;
+            border-top: 4px solid transparent;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Subdomain Scanner</h1>
+    <input type="text" id="domain" placeholder="Enter domain">
+    <button onclick="startScan()">Start Scan</button>
+    <div id="loading" style="display:none">Scanning... Please wait.<span></span></div>
+    <ul id="subdomains"></ul>
+
+    <script>
+        function startScan() {
+            var domain = $('#domain').val();
+            if (domain) {
+                $('#loading').show();
+                $('#subdomains').empty();
+                $.get('/scanner/start_scan/', {domain: domain}, function(data) {
+                    $('#loading').hide();
+                    var subdomains = data.subdomains;
+                    var scan_date = data.scan_date;
+                    if (scan_date) {
+                        $('#subdomains').append('<li><strong>Last Scan Date:</strong> ' + scan_date + '</li>');
+                    }
+                    if (subdomains.length > 0) {
+                        for (var i = 0; i < subdomains.length; i++) {
+                            $('#subdomains').append('<li>' + subdomains[i] + '</li>');
+                        }
+                    } else {
+                        $('#subdomains').append('<li>No subdomains found or an error occurred.</li>');
+                    }
+                });
+            } else {
+                alert("Please enter a domain to scan.");
+            }
+        }
+    </script>
+</body>
+</html>

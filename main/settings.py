@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-4-f#-5e^*p^he%t8r%7q+ds_xg74^a%rh(d_ss-ek7vwo2lw#4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["redteam.pythonanywhere.com"]
+ALLOWED_HOSTS = ["redteam.pythonanywhere.com", "127.0.0.1"]
 
 
 # Application definition
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'home',
     'analyzer',
     'account',
+    'scanner'
 ]
 
 MIDDLEWARE = [
