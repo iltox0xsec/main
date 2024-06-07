@@ -133,11 +133,10 @@ def upload_eml(request):
             eml_file = request.FILES['eml_file']
             if eml_file.name.endswith('.eml'):
                 fs = FileSystemStorage()
-                random_folder = f"eml-{uuid.uuid4()}"
-                file_path = f"media/{random_folder}/{uuid.uuid4()}.eml"
+                file_path = f"eml/{uuid.uuid4()}.eml"
                 filename = fs.save(file_path, eml_file)
                 uploaded_file_url = fs.url(filename)
-                
+
                 return redirect(reverse('analyzer:show_result', kwargs={'uploaded_file_url': filename}))
             else:
                 form.add_error('eml_file', 'Yalnızca .eml dosyaları yükleyebilirsiniz.')
@@ -146,7 +145,7 @@ def upload_eml(request):
     return render(request, 'analyzer/eml/upload_eml.html', {'form': form})
 
 def show_result(request, uploaded_file_url):
-    file_path = f'./media/{uploaded_file_url}'  # Dosya yolunu doğru oluşturmak için güncellendi
+    file_path = os.path.join(settings.MEDIA_ROOT, uploaded_file_url)
     try:
         info = extract_info_from_eml(file_path)
         #print("Extracted Info:", info)  # Debug Output
