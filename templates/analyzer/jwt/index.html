@@ -1,0 +1,65 @@
+{% include "base/base.html" %}
+{% block title %}
+JWT Decoder
+{% endblock title %}
+{% block content %}
+    <form id="jwt-form" method="post" action="{% url 'analyzer:analyze_jwt' %}">
+        {% csrf_token %}
+        <label for="token">JWT Token:</label>
+        <textarea class="form-control" placeholder="Paste JWT" name="token" id="token" rows="4" cols="50"></textarea>
+    </form>
+    <div id="result" class="result-container"></div>
+    <script>
+        document.querySelector('#token').addEventListener('input', function(event) {
+            event.preventDefault();
+            const form = document.getElementById('jwt-form');
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value}
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultContainer = document.getElementById('result');
+                resultContainer.innerHTML = `<pre>${syntaxHighlight(JSON.stringify(data, null, 2))}</pre>`;
+            });
+        });
+
+        function syntaxHighlight(json) {
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:\s*)?|true|false|null|\b-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?\b)/g, function (match) {
+                var cls = 'number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                    } else {
+                        cls = 'string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+    </script>
+    <style>
+        .result-container {
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 4px;
+            width: 50%;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+
+        .string { color: green; }
+        .number { color: darkorange; }
+        .boolean { color: blue; }
+        .null { color: magenta; }
+        .key { color: red; }
+    </style>
+{% endblock content %}

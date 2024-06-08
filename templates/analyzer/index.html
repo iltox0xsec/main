@@ -1,77 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analyzer</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #0f0f0f;
-            color: #ffffff;
-            font-family: 'Arial', sans-serif;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-            overflow: hidden;
-        }
-        .btn {
-            font-size: 1.5rem;
-            padding: 1rem 2rem;
-            margin: 0.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .btn-login {
-            background-color: #ff00ff;
-            color: #000000;
-            box-shadow: 0 0 1rem #ff00ff;
-        }
-        .btn-login:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 1.5rem #ff00ff;
-        }
-        .btn-register {
-            background-color: #00ffff;
-            color: #000000;
-            box-shadow: 0 0 1rem #00ffff;
-        }
-        .btn-register:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 1.5rem #00ffff;
-        }
-        .container {
-            text-align: center;
-        }
-        .card {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid #ffffff;
-            border-radius: 0.5rem;
-            padding: 2rem;
-            margin: 1rem;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 1.5rem #ffffff;
-        }
-        
-    </style>
-</head>
-<body>
+{% include "base/base.html" %}
+{% block title %}
+Analyzer
+{% endblock title %}
+{% block content %}
 
-{% if user.is_authenticated %}
-    <div class="container">
+    <div class="container ">
         <div class="card" onclick="window.location.href='{% url 'analyzer:upload_eml' %}'">EML ANALYZER</div>
-        <div class="card" onclick="window.location.href='{% url 'analyzer:upload_any_file' %}'">SHOW FILE CONTEN-TYPE etc.</div>
-        <div class="card" onclick="window.location.href='/page3'">Card 3</div>
-    </div>
+        <div class="card" onclick="window.location.href='{% url 'analyzer:upload_any_file' %}'">SHOW FILE CONTEN-TYPE
+            etc.</div>
+        <div class="card" onclick="window.location.href='{% url 'analyzer:jwt' %}'">JWT DECODER</div>
 
-{% endif %}
-</body>
-</html>
+        <div class="card" onclick="window.location.href='{% url 'scanner:subdomain' %}'">SUBDOMAIN SCANNER</div>
+    </div>
+{% endblock content %}

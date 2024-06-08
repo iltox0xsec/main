@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, HttpResponse
+from django.http import JsonResponse
 from django.core.files.storage import FileSystemStorage
 import uuid
 from django.urls import reverse
 from .forms import *
+from .utils import *
 import email
 from email import policy
 from email.parser import BytesParser
@@ -264,3 +266,22 @@ def download_any_file(request):
             return response
     else:
         return HttpResponse("File not found.", status=404)
+
+
+# JWT
+
+
+def jwt(request):
+    return render(request, 'analyzer/jwt/index.html') 
+
+def analyze_jwt(request):
+    if request.method == 'POST':
+        token = request.POST.get('token')
+        header, payload, valid = decode_jwt(token)
+        response = {
+            'header': header,
+            'payload': payload,
+            'valid': valid
+        }
+        return JsonResponse(response)
+    return JsonResponse({'error': 'Invalid request'}, status=400)

@@ -101,7 +101,7 @@
             if (domain) {
                 $('#loading').show();
                 $('#subdomains').empty();
-                $.get('/scanner/start_scan/', {domain: domain}, function(data) {
+                $.get('/scanner/subdomain_scan/', {domain: domain}, function(data) {
                     $('#loading').hide();
                     var subdomains = data.subdomains;
                     var scan_date = data.scan_date;
