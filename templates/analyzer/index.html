@@ -1,4 +1,4 @@
-{% include "base/base.html" %}
+{% extends "base/base.html" %}
 {% block title %}
 Analyzer
 {% endblock title %}
@@ -10,6 +10,5 @@ Analyzer
             etc.</div>
         <div class="card" onclick="window.location.href='{% url 'analyzer:jwt' %}'">JWT DECODER</div>
 
-        <div class="card" onclick="window.location.href='{% url 'scanner:subdomain' %}'">SUBDOMAIN SCANNER</div>
     </div>
 {% endblock content %}

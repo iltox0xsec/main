@@ -1,1 +1,55 @@
-SCANNER
+{% extends "base/base.html" %}
+{% block content %}
+
+    <div class="container mt-5">
+        <!-- Analyzer Group -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2>Analyzer Tools</h2>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100" onclick="window.location.href='{% url 'analyzer:upload_eml' %}'">
+                    <div class="card-body">
+                        <h5 class="card-title">EML Analyzer</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100" onclick="window.location.href='{% url 'analyzer:upload_any_file' %}'">
+                    <div class="card-body">
+                        <h5 class="card-title">Show File Content-Type etc.</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100" onclick="window.location.href='{% url 'analyzer:jwt' %}'">
+                    <div class="card-body">
+                        <h5 class="card-title">JWT Decoder</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scanner Group -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2>Scanner Tools</h2>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card h-100" onclick="window.location.href='{% url 'scanner:subdomain' %}'">
+                    <div class="card-body">
+                        <h5 class="card-title">Subdomain Scanner</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card h-100" onclick="window.location.href='{% url 'scanner:scan_domain_dns' %}'">
+                    <div class="card-body">
+                        <h5 class="card-title">Scan DNS</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

@@ -16,6 +16,8 @@ urlpatterns = [
     #jwt
     path('jwt/', jwt, name='jwt'),
     path('analyze_jwt/', analyze_jwt, name='analyze_jwt'),
+   
+
 
 
 ]

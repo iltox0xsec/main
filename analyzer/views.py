@@ -1,17 +1,19 @@
 from django.shortcuts import render, redirect, HttpResponse
-from django.http import JsonResponse
+from django.http import HttpResponse, Http404, JsonResponse
 from django.core.files.storage import FileSystemStorage
 import uuid
 from django.urls import reverse
 from .forms import *
 from .utils import *
-import email
 from email import policy
 from email.parser import BytesParser
 import re, os
 import base64
-from tempfile import NamedTemporaryFile
 from django.conf import settings
+from .models import *
+from mimetypes import guess_type
+from pathlib import Path
+
 
 
 
@@ -168,6 +170,7 @@ def handle_uploaded_any_file(f):
     file_content = f.read()
 
     response_text = f"""
+    <title>Result</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <div class="container" style="margin-top: 20px;">
         <div class="card">
@@ -257,15 +260,40 @@ def upload_any_file(request):
         form = UploadAnyFileForm()
     return render(request, 'analyzer/anyfile/upload_any_file.html', {'form': form})
 
+from mimetypes import guess_type
+
+
+
 def download_any_file(request):
     file_path = request.GET.get('file_path')
-    if os.path.exists(file_path):
-        with open(file_path, 'rb') as f:
-            response = HttpResponse(f.read(), content_type='text/plain')
-            response['Content-Disposition'] = f'attachment; filename={os.path.basename(file_path)}'
-            return response
-    else:
-        return HttpResponse("File not found.", status=404)
+
+    if not file_path:
+        return HttpResponse("File path not provided", status=400)
+
+    safe_file_path = Path(settings.MEDIA_ROOT) / file_path
+    safe_file_path_str = str(safe_file_path.resolve())
+    
+    if not safe_file_path_str.startswith(str(Path(settings.MEDIA_ROOT).resolve())):
+        return HttpResponse("Unauthorized file access", status=403)
+
+    if not safe_file_path_str.lower().endswith('.txt'):
+        return HttpResponse("Only .txt files are allowed", status=403)
+
+    if not safe_file_path.exists():
+        raise Http404("File not found")
+
+    mime_type, _ = guess_type(safe_file_path_str)
+    if mime_type is None:
+        mime_type = 'text/plain'
+
+    file_name = safe_file_path.name
+
+    with open(safe_file_path, 'rb') as file:
+        response = HttpResponse(file.read(), content_type=mime_type)
+        response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+        response['Content-Length'] = safe_file_path.stat().st_size
+        return response
+
 
 
 # JWT

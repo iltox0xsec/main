@@ -1,9 +1,9 @@
-{% include "base/base.html" %}
+{% extends "base/base.html" %}
 {% block title %}
 Upload ANY File
 {% endblock title %}
 {% block content %}
-<div class="container">
+<div class="container mt-5">
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-group">
