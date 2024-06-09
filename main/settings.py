@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'home',
     'analyzer',
     'account',
-    'scanner'
+    'scanner',
+    'chat'
 ]
 
 MIDDLEWARE = [
@@ -138,3 +139,13 @@ if not os.path.exists(TEMP_DIR):
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+import os
+from dotenv import load_dotenv
+import base64
+
+# Ortam değişkenlerini yükle
+load_dotenv()
+
+# Ortam değişkeninden şifreleme anahtarını alın
+FERNET_KEY = base64.urlsafe_b64decode(os.getenv('FERNET_KEY'))

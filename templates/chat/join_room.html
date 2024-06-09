@@ -1,0 +1,11 @@
+{% extends "base/base.html" %}
+{% block content %}
+{% include "base/alert.html" %}
+
+<h2>Join Room</h2>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="room_key" placeholder="Enter room key">
+    <button type="submit">Join Room</button>
+</form>
+{% endblock %}

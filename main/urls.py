@@ -9,6 +9,8 @@ urlpatterns = [
     path('analyzer/', include('analyzer.urls')),
     path('scanner/', include('scanner.urls')),
     path('account/', include('account.urls')),
+    path('chat/', include('chat.urls')),
+
 ]
 
 if settings.DEBUG:

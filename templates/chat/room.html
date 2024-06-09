@@ -1,0 +1,175 @@
+{% extends "base/base.html" %}
+{% block content %}
+{% include "base/alert.html" %}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-9">
+            <h2 class="mb-4">
+                Room: {{ room.url_path }}
+            </h2>
+            <h6 class="mb-4">
+                Room Key: <span id="room-key" class="blur-text" onclick="showRoomKey()">{{ room.key }}</span>
+                <button class="btn btn-sm btn-outline-secondary ml-2" onclick="copyRoomKey()">Copy</button>
+                <span id="copied-message" class="text-success ml-2" style="display:none;">Copied!</span>
+            </h6>
+
+            <div class="mt-4" id="message-container" style="max-height: 70vh; overflow-y: auto;">
+                <ul class="list-group" id="message-list">
+                    {% for msg in messages %}
+                    <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center" data-message-id="{{ msg.id }}">
+                        <div>
+                            <strong class="username" data-username="{{ msg.sender }}">{{ msg.sender }}:</strong> 
+                            <span class="message-content">{{ msg.content }}</span>
+                        </div>
+                        <em class="text-muted">{{ msg.timestamp }}</em>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <form id="chat-message-form" class="mt-4">
+                {% csrf_token %}
+                <div class="form-group">
+                    <textarea class="form-control text-success" id="message-input" placeholder="Enter your message" rows="4"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+        </div>
+        <div class="col-md-3">
+            <h5 class="mb-3">Users in Room</h5>
+            <ul class="list-group">
+                {% for user in users %}
+                <li class="list-group-item d-flex justify-content-between align-items-center" style="background: transparent; color: blue">
+                    {{ user.username }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery ve Bootstrap JS dosyalarını ekleyin -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+<script>
+    function showRoomKey() {
+        var roomKeyElement = document.getElementById("room-key");
+        roomKeyElement.classList.remove("blur-text");
+    }
+
+    function copyRoomKey() {
+        var roomKeyElement = document.getElementById("room-key");
+        var roomKey = roomKeyElement.textContent;
+        navigator.clipboard.writeText(roomKey).then(function() {
+            document.getElementById("copied-message").style.display = "inline";
+        }, function(err) {
+            alert("Failed to copy room key: " + err);
+        });
+    }
+
+    document.getElementById('chat-message-form').onsubmit = function(e) {
+        e.preventDefault();
+        const messageInputDom = document.getElementById('message-input');
+        const message = messageInputDom.value;
+        
+        if (message.trim() !== "") {
+            $.ajax({
+                url: '{% url "chat:room" room.url_path %}',
+                type: 'POST',
+                data: {
+                    'message': message,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function() {
+                    messageInputDom.value = '';
+                    loadNewMessages();
+                    scrollToBottom(); // Yeni mesaj gönderildiğinde sayfanın en altına kaydır
+                }
+            });
+        }
+    };
+
+    function loadNewMessages() {
+        const lastMessageId = $("#message-list li").last().data("message-id") || 0;
+        
+        $.ajax({
+            url: '{% url "chat:get_new_messages" room.url_path %}',
+            type: 'GET',
+            data: {
+                'last_message_id': lastMessageId
+            },
+            success: function(data) {
+                const messages = data.messages;
+                if (messages.length > 0) {
+                    const messageList = document.getElementById('message-list');
+                    messages.forEach(function(message) {
+                        const messageItem = document.createElement('li');
+                        messageItem.className = 'list-group-item bg-transparent d-flex justify-content-between align-items-center';
+                        messageItem.setAttribute('data-message-id', message.id);
+                        messageItem.innerHTML = `
+                            <div>
+                                <strong class="username" data-username="${message.sender}">${message.sender}:</strong> 
+                                <span class="message-content">${message.content}</span>
+                            </div>
+                            <em class="text-muted">${message.timestamp}</em>
+                        `;
+                        messageList.appendChild(messageItem);
+                        assignUserColors(); // Yeni mesajlar için renk ataması yap
+                    });
+                    scrollToBottom(); // Yeni mesaj geldiğinde sayfanın en altına kaydır
+                }
+            }
+        });
+    }
+
+    function generateColor(username) {
+        const hash = md5(username);
+        return `#${hash.slice(0, 6)}`;
+    }
+
+    function md5(string) {
+        return CryptoJS.MD5(string).toString();
+    }
+
+    function assignUserColors() {
+        const usernameElements = document.querySelectorAll('.username');
+        usernameElements.forEach(el => {
+            const username = el.getAttribute('data-username');
+            const color = generateColor(username);
+            el.style.color = color;
+        });
+    }
+
+    function scrollToBottom() {
+        const messageContainer = document.getElementById('message-container');
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+        document.getElementById('message-input').focus(); // Textarea'ya focus ver
+    }
+
+    setInterval(loadNewMessages, 5000);  // Her 5 saniyede bir yeni mesajları kontrol et
+
+    // Sayfa yüklendiğinde mevcut mesajlara renk ataması yap, sayfanın en altına kaydır ve textarea'ya focus ver
+    document.addEventListener('DOMContentLoaded', function() {
+        assignUserColors();
+        scrollToBottom();
+    });
+</script>
+
+<style>
+    .blur-text {
+        filter: blur(8px);
+        cursor: pointer;
+    }
+    .blur-text:hover {
+        filter: none;
+    }
+    .message-content {
+        font-size: 1.2em;  /* Mesaj içeriğini biraz daha büyük yapmak için */
+    }
+    .list-group-item {
+        background-color: rgba(255, 255, 255, 0.5); /* Arka planı transparan yapmak için */
+    }
+</style>
+{% endblock %}
