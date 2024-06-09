@@ -48,13 +48,14 @@
         }
     }
 </style>
+<div class="container mt-5">
+<h1 class="text-center display-4 fst-italic rounded">Subdomain Scanner</h1>
 
-<h1>Subdomain Scanner</h1>
 <input type="text" id="domain" placeholder="Enter domain" style="width: 30%">
 <button onclick="startScan()">Start Scan</button>
 <div id="loading" style="display:none">Scanning... Please wait.<span></span></div>
 <ul id="subdomains"></ul>
-
+</div>
 <script>
     function startScan() {
         var domain = document.getElementById('domain').value;

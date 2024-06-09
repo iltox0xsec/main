@@ -4,7 +4,6 @@ DNS scan
 {% endblock title %}
 
 {% block content %}
-{% include "base/alert.html" %}
 
 <style>
     .form-container {
@@ -36,7 +35,7 @@ DNS scan
 </style>
 <body>
     <div class="container form-container">
-        <h1 class="mb-4">DNS Scan</h1>
+        <h1 class="text-center display-4 fst-italic rounded">Dns Scan</h1>
         <form method="post" id="dns-form" class="w-50">
             {% csrf_token %}
             <div class="form-group">

@@ -10,4 +10,4 @@ class EmlUploadForm(forms.Form):
         return eml_file
 
 class UploadAnyFileForm(forms.Form):
-    file = forms.FileField()
+    file = forms.FileField(widget=forms.FileInput(attrs={'class': 'form-controld'}))

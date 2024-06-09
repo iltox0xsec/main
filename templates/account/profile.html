@@ -1,0 +1,22 @@
+{% extends "base/base.html" %}
+{% block title %}
+User Profile
+{% endblock title %}
+{% block content %}
+<div class="container">
+    <h1 class="mt-5">User Profile</h1>
+    <div class="card mt-3">
+        <div class="card-body">
+            <h1 class="card-text">Username: {{ request.user.username }}</h1>
+            <h1 class="card-text">Email: {{ request.user.email }}</h1>
+            <h1 class="card-text">Registration Date: {{ request.user.date_joined }}</h1>
+        </div>
+    </div>
+    <hr style="color: aqua;">
+    <div class="mb-3 text-center">
+        <input type="submit" value="Change Password" onclick="window.location.href='{% url 'account:changeUserPassword' %}'" class="btn btn-lg" style="background-color: #00eeff;">
+    </div>
+    
+    
+</div>
+{% endblock content %}

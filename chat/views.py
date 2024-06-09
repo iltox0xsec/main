@@ -5,7 +5,6 @@ from .models import Room, Message
 from .encryption import encrypt_message, decrypt_message
 import uuid
 from cryptography.fernet import Fernet
-from django.contrib import messages
 
 
 @login_required

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,10 +44,16 @@ INSTALLED_APPS = [
     'analyzer',
     'account',
     'scanner',
-    'chat'
+    'chat',
+
+
+    # third part
+    'axes',
 ]
 
 MIDDLEWARE = [
+    'axes.middleware.AxesMiddleware', # failed login attempts
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -55,6 +62,21 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+AXES_LOCKOUT_CALLABLE = "account.views.lockout"
+
+
+AXES_FAILURE_LIMIT = 3  
+AXES_COOLOFF_TIME = timedelta(hours=24)
+
+
+LOGIN_URL = 'account:login'
+
 
 ROOT_URLCONF = 'main.urls'
 

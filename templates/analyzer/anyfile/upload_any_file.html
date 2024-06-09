@@ -4,12 +4,13 @@ Upload ANY File
 {% endblock title %}
 {% block content %}
 <div class="container mt-5">
+    <h1 class="text-center display-4 fst-italic rounded">Upload ANY File</h1>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-group">
             {{ form.as_p }}
         </div>
-        <button type="submit" class="btn btn-success">Upload</button>
+        <button type="submit" class="btn btn-lg btn-success mt-5">Upload</button>
     </form>
     {% if form.errors %}
     <div class="alert alert-danger">

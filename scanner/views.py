@@ -4,7 +4,6 @@ from django.http import JsonResponse
 from .utils import scan_subdomains
 from .forms import *
 import dns.resolver
-from django.contrib import messages
 
 
 def index(request):
@@ -43,7 +42,6 @@ def scan_domain_dns(request):
             domain = form.cleaned_data['domain']
             record_types = form.cleaned_data['record_types']
             all_records = form.cleaned_data['all_records']
-            messages.warning(request, 'Your message sent.')
             
 
             results = {}
@@ -61,4 +59,4 @@ def scan_domain_dns(request):
     else:
         form = DomainForm()
 
-    return render(request, 'analyzer/dns/index.html', {'form': form})
+    return render(request, 'scanner/dns/index.html', {'form': form})

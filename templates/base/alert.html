@@ -1,24 +1,28 @@
 {% if messages %}
 {% for message in messages %}
 <style>
-        .toast-container {
-            position: fixed;
-            top: 0;
-            right: 0;
-            z-index: 1055;
-        }
-    </style>
+  .toast-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1055;
+  }
+</style>
 <div class="toast-container position-fixed top-0 end-0 p-3">
-    <div id="liveToast" class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="toast-header">
-        <strong class="me-auto">Online Pentest Tools</strong>
-    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-      </div>
-      <div class="toast-body">
-        {{message}}
-      </div>
+  <div id="liveToast" class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <strong class="me-auto">Online Pentest Tools </strong>
+    </div>
+    <div class="toast-body bg-dark">
+      {{message}}
     </div>
   </div>
-  
+</div>
+<script>
+  setTimeout(function () {
+    document.getElementById("liveToast").style.display = "none";
+  }, 3000);
+</script>
+
 {% endfor %}
 {% endif %}

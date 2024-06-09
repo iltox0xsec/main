@@ -1,7 +1,5 @@
 {% extends "base/base.html" %}
 {% block content %}
-{% include "base/alert.html" %}
-
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-9">
@@ -49,10 +47,6 @@
     </div>
 </div>
 
-<!-- jQuery ve Bootstrap JS dosyalarını ekleyin -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
 <script>
     function showRoomKey() {
         var roomKeyElement = document.getElementById("room-key");
